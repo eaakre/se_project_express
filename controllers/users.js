@@ -26,36 +26,48 @@ const getUsers = (req, res) => {
     });
 };
 
-const updateUser = (req, res) => {
+const getUserById = (req, res) => {
   const { userId } = req.params;
-  const { avatar } = req.body;
+  console.log();
 
-  console.log(userId, avatar);
-  User.findByIdAndUpdate(userId, { $set: { avatar } })
-    .orFail()
-    .then((user) => res.status(200).send({ data: user }))
+  User.findById(userId)
+    .then((user) => res.status(200).send(user))
     .catch((e) => {
-      res.status(500).send({ message: "Error from updateUser,", e });
+      res.status(500).send({ message: "Error from getUserById,", e });
     });
 };
 
-const deleteUser = (req, res) => {
-  console.log(req);
-  const { userId } = req.params;
+// const updateUser = (req, res) => {
+//   const { userId } = req.params;
+//   const { avatar } = req.body;
 
-  console.log(userId);
+//   console.log(userId, avatar);
+//   User.findByIdAndUpdate(userId, { $set: { avatar } })
+//     .orFail()
+//     .then((user) => res.status(200).send({ data: user }))
+//     .catch((e) => {
+//       res.status(500).send({ message: "Error from updateUser,", e });
+//     });
+// };
 
-  User.findByIdAndDelete(userId)
-    .orFail()
-    .then((user) => res.status(204).send({}))
-    .catch((e) => {
-      res.status(500).send({ message: "Error from deleteUser,", e });
-    });
-};
+// const deleteUser = (req, res) => {
+//   console.log(req);
+//   const { userId } = req.params;
+
+//   console.log(userId);
+
+//   User.findByIdAndDelete(userId)
+//     .orFail()
+//     .then((user) => res.status(204).send({}))
+//     .catch((e) => {
+//       res.status(500).send({ message: "Error from deleteUser,", e });
+//     });
+// };
 
 module.exports = {
   createUser,
   getUsers,
-  updateUser,
-  deleteUser,
+  getUserById,
+  // updateUser,
+  // deleteUser,
 };
