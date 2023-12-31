@@ -16,43 +16,46 @@ const createUser = (req, res) => {
     });
 };
 
-// const getItems = (req, res) => {
-//   console.log(req);
+const getUsers = (req, res) => {
+  console.log(req);
 
-//   User.find({})
-//     .then((items) => res.status(200).send(items))
-//     .catch((e) => {
-//       res.status(500).send({ message: "Error from getItems,", e });
-//     });
-// };
+  User.find({})
+    .then((users) => res.status(200).send(users))
+    .catch((e) => {
+      res.status(500).send({ message: "Error from getUsers,", e });
+    });
+};
 
-// const updateItem = (req, res) => {
-//   const { itemId } = req.params;
-//   const { imageURL } = req.body;
+const updateUser = (req, res) => {
+  const { userId } = req.params;
+  const { avatar } = req.body;
 
-//   console.log(itemId, imageURL);
-//   User.findByIdAndUpdate(itemId, { $set: { imageURL } })
-//     .orFail()
-//     .then((item) => res.status(200).send({ data: item }))
-//     .catch((e) => {
-//       res.status(500).send({ message: "Error from updateItem,", e });
-//     });
-// };
+  console.log(userId, avatar);
+  User.findByIdAndUpdate(userId, { $set: { avatar } })
+    .orFail()
+    .then((user) => res.status(200).send({ data: user }))
+    .catch((e) => {
+      res.status(500).send({ message: "Error from updateUser,", e });
+    });
+};
 
-// const deleteItem = (req, res) => {
-//   console.log(req);
-//   const { itemId } = req.params;
+const deleteUser = (req, res) => {
+  console.log(req);
+  const { userId } = req.params;
 
-//   console.log(itemId);
+  console.log(userId);
 
-//   User.findByIdAndDelete(itemId)
-//     .orFail()
-//     .then((item) => res.status(204).send({}))
-//     .catch((e) => {
-//       res.status(500).send({ message: "Error from deleteItem,", e });
-//     });
-// };
+  User.findByIdAndDelete(userId)
+    .orFail()
+    .then((user) => res.status(204).send({}))
+    .catch((e) => {
+      res.status(500).send({ message: "Error from deleteUser,", e });
+    });
+};
 
 module.exports = {
   createUser,
+  getUsers,
+  updateUser,
+  deleteUser,
 };
