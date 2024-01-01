@@ -1,5 +1,9 @@
 const User = require("../models/user");
-const { INVALID_DATA_ERROR, DEFAULT_ERROR } = require("../utils/errors");
+const {
+  BAD_REQUEST_ERROR,
+  NOTFOUND_ERROR,
+  DEFAULT_ERROR,
+} = require("../utils/errors");
 
 const createUser = (req, res) => {
   const { name, avatar } = req.body;
@@ -11,7 +15,7 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res.status(INVALID_DATA_ERROR).send({ message: err.message });
+        res.status(BAD_REQUEST_ERROR).send({ message: err.message });
       } else {
         res
           .status(DEFAULT_ERROR)
@@ -38,9 +42,16 @@ const getUserById = (req, res) => {
     .orFail()
     .then((user) => res.status(200).send(user))
     .catch((err) => {
-      console.error(
-        `Error ${err.name} with the message ${err.message} has occurred while executing the code`,
-      );
+      console.error(err);
+      if (err.name === "DocumentNotFoundError") {
+        res.status(NOTFOUND_ERROR).send({ message: err.message });
+      } else if (err.name === "CastError") {
+        res.status(BAD_REQUEST_ERROR).send({ message: err.message });
+      } else {
+        res
+          .status(DEFAULT_ERROR)
+          .send({ message: "An error has occurred on the server." });
+      }
     });
 };
 

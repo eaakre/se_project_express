@@ -1,22 +1,22 @@
 const ClothingItem = require("../models/clothingItem");
 const {
-  INVALID_DATA_ERROR,
+  BAD_REQUEST_ERROR,
   NOTFOUND_ERROR,
   DEFAULT_ERROR,
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
-  const { name, weather, imageURL } = req.body;
+  const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
 
-  ClothingItem.create({ name, weather, imageURL, owner })
+  ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.send({ data: item });
     })
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res.status(INVALID_DATA_ERROR).send({ message: err.message });
+        res.status(BAD_REQUEST_ERROR).send({ message: err.message });
       } else {
         res
           .status(DEFAULT_ERROR)
@@ -38,9 +38,9 @@ const getItems = (req, res) => {
 
 // const updateItem = (req, res) => {
 //   const { itemId } = req.params;
-//   const { imageURL } = req.body;
+//   const { imageUrl } = req.body;
 
-//   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageURL } })
+//   ClothingItem.findByIdAndUpdate(itemId, { $set: { imageUrl } })
 //     .orFail()
 //     .then((item) => res.status(200).send({ data: item }))
 //     .catch((e) => {
@@ -53,13 +53,13 @@ const deleteItem = (req, res) => {
 
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
-    .then((item) => res.status(204).send({}))
+    .then((item) => res.status(200).send({ item }))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         res.status(NOTFOUND_ERROR).send({ message: err.message });
       } else if (err.name === "CastError") {
-        res.status(INVALID_DATA_ERROR).send({ message: err.message });
+        res.status(BAD_REQUEST_ERROR).send({ message: err.message });
       } else {
         res
           .status(DEFAULT_ERROR)
@@ -82,7 +82,7 @@ const likeItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         res.status(NOTFOUND_ERROR).send({ message: err.message });
       } else if (err.name === "CastError") {
-        res.status(INVALID_DATA_ERROR).send({ message: err.message });
+        res.status(BAD_REQUEST_ERROR).send({ message: err.message });
       } else {
         res
           .status(DEFAULT_ERROR)
@@ -105,7 +105,7 @@ const unlikeItem = (req, res) => {
       if (err.name === "DocumentNotFoundError") {
         res.status(NOTFOUND_ERROR).send({ message: err.message });
       } else if (err.name === "CastError") {
-        res.status(INVALID_DATA_ERROR).send({ message: err.message });
+        res.status(BAD_REQUEST_ERROR).send({ message: err.message });
       } else {
         res
           .status(DEFAULT_ERROR)
