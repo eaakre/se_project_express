@@ -6,10 +6,9 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint ."
   },
-  "author": "",
+  "author": "Erik Aakre",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
