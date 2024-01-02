@@ -15,7 +15,7 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST_ERROR).send({ message: err.message });
+        res.status(BAD_REQUEST_ERROR).send({ message: "Invalid data" });
       } else {
         res
           .status(DEFAULT_ERROR)
@@ -26,7 +26,7 @@ const createUser = (req, res) => {
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
+    .then((users) => res.send(users))
     .catch((err) => {
       console.error(err);
       res
@@ -40,13 +40,13 @@ const getUserById = (req, res) => {
 
   User.findById(userId)
     .orFail()
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.send(user))
     .catch((err) => {
       console.error(err);
       if (err.name === "DocumentNotFoundError") {
         res.status(NOTFOUND_ERROR).send({ message: err.message });
       } else if (err.name === "CastError") {
-        res.status(BAD_REQUEST_ERROR).send({ message: err.message });
+        res.status(BAD_REQUEST_ERROR).send({ message: "Invalid data" });
       } else {
         res
           .status(DEFAULT_ERROR)
@@ -61,7 +61,7 @@ const getUserById = (req, res) => {
 
 //   User.findByIdAndUpdate(userId, { $set: { avatar } })
 //     .orFail()
-//     .then((user) => res.status(200).send({ data: user }))
+//     .then((user) => res.send({ data: user }))
 //     .catch((e) => {
 //       res.status(500).send({ message: "Error from updateUser,", e });
 //     });
