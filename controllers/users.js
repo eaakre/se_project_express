@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const bcrypt = require("bcryptjs");
 const {
   BAD_REQUEST_ERROR,
   NOTFOUND_ERROR,
@@ -6,9 +7,16 @@ const {
 } = require("../utils/errors");
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
+  const { name, avatar, email, password } = req.body;
 
-  User.create({ name, avatar })
+  User.create({ name, avatar, email, password });
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        throw new Error("Email is already in use");
+      }
+      return bcrypt.hash(password, 16);
+    })
     .then((user) => {
       res.send({ data: user });
     })
