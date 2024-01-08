@@ -9,11 +9,11 @@ const {
 } = require("../controllers/users");
 
 // CREATE
-router.post("/", createUser);
+// router.post("/", createUser);
 
 // READ
-router.get("/", getUsers);
-router.get("/:userId", getUserById);
+// router.get("/", getUsers);
+// router.get("/:userId", getUserById);
 
 // UPDATE
 // router.put("/:userId", updateUser);
