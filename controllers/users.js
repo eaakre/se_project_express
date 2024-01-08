@@ -1,5 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../utils/config");
 const {
   BAD_REQUEST_ERROR,
   NOTFOUND_ERROR,
@@ -63,6 +65,19 @@ const getUserById = (req, res) => {
     });
 };
 
+const login = (req, res) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+        expiresIn: "7d",
+      });
+      res.send({ token });
+    })
+    .catch((err) => {
+      res.status(401).send({ message: err.message });
+    });
+};
 // const updateUser = (req, res) => {
 //   const { userId } = req.params;
 //   const { avatar } = req.body;
@@ -90,6 +105,7 @@ module.exports = {
   createUser,
   getUsers,
   getUserById,
+  login,
   // updateUser,
   // deleteUser,
 };
