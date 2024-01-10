@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
+const auth = require("./middlewares/auth");
 const { login, createUser } = require("./controllers/users");
 
 const { PORT = 3001 } = process.env;
@@ -21,7 +22,9 @@ const routes = require("./routes");
 
 app.post("/signin", login);
 app.post("/signup", createUser);
+// app.get("/items", items);
 
+app.use(auth);
 app.use((req, res, next) => {
   req.user = {
     _id: "659192725d19421b44f90e67",
