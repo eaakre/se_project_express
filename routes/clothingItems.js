@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const auth = require("./middlewares/auth");
+const { handleAuthorization } = require("../middlewares/auth");
 
 const {
   createItem,
@@ -12,7 +12,7 @@ const {
 
 router.get("/", getItems);
 
-router.use(auth);
+// router.use(handleAuthorization);
 router.post("/", createItem);
 
 // router.put("/:itemId", updateItem);

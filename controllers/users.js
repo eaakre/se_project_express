@@ -10,17 +10,22 @@ const {
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
-
-  User.create({ name, avatar, email, password });
+  console.log({ name, avatar, email, password });
   User.findOne({ email })
     .then((user) => {
+      if (!email) {
+        throw new Error("Please enter a valid email");
+      }
       if (user) {
         throw new Error("Email is already in use");
       }
-      return bcrypt.hash(password, 16);
+      return bcrypt.hash(password, 10);
     })
+    .then((hash) => User.create({ name, avatar, email, password: hash }))
     .then((user) => {
-      res.send({ data: user });
+      const payload = user.toObject();
+      delete payload.password;
+      res.status(201).send({ data: payload });
     })
     .catch((err) => {
       console.error(err);
@@ -78,6 +83,10 @@ const login = (req, res) => {
       res.status(401).send({ message: err.message });
     });
 };
+
+// const getCurrentUser = (req, res) => {
+//   const { _id: userId } = req.user;
+// };
 // const updateUser = (req, res) => {
 //   const { userId } = req.params;
 //   const { avatar } = req.body;
