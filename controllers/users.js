@@ -13,6 +13,8 @@ const createUser = (req, res) => {
   console.log({ name, avatar, email, password });
   User.findOne({ email })
     .then((user) => {
+      console.log(email);
+      console.log(user);
       if (!email) {
         throw new Error("Please enter a valid email");
       }
@@ -84,20 +86,33 @@ const login = (req, res) => {
     });
 };
 
-// const getCurrentUser = (req, res) => {
-//   const { _id: userId } = req.user;
-// };
-// const updateUser = (req, res) => {
-//   const { userId } = req.params;
-//   const { avatar } = req.body;
+const getCurrentUser = (req, res) => {
+  const id = req.user._id;
+  return User.findById(id)
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error("User not found"));
+      }
+      return res.send({ date: user });
+    })
+    .catch((err) => {
+      res.status(404).send({ message: err.message });
+    });
+};
 
-//   User.findByIdAndUpdate(userId, { $set: { avatar } })
-//     .orFail()
-//     .then((user) => res.send({ data: user }))
-//     .catch((e) => {
-//       res.status(500).send({ message: "Error from updateUser,", e });
-//     });
-// };
+const updateUser = (req, res) => {
+  const id = req.user._id;
+  const { name, avatar } = req.body;
+
+  User.findByIdAndUpdate(id, { $set: { name, avatar } })
+    .orFail()
+    .then((user) => {
+      return res.send({ data: user });
+    })
+    .catch((e) => {
+      res.status(500).send({ message: "Error from updateUser,", e });
+    });
+};
 
 // const deleteUser = (req, res) => {
 //   const { userId } = req.params;
@@ -115,6 +130,7 @@ module.exports = {
   getUsers,
   getUserById,
   login,
-  // updateUser,
+  getCurrentUser,
+  updateUser,
   // deleteUser,
 };
