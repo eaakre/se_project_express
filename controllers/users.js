@@ -104,7 +104,11 @@ const updateUser = (req, res) => {
   const id = req.user._id;
   const { name, avatar } = req.body;
 
-  User.findByIdAndUpdate(id, { $set: { name, avatar } })
+  User.findByIdAndUpdate(
+    id,
+    { $set: { name, avatar } },
+    { new: true, runValidators: true },
+  )
     .orFail()
     .then((user) => {
       return res.send({ data: user });
