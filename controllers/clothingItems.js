@@ -3,6 +3,7 @@ const {
   BAD_REQUEST_ERROR,
   NOTFOUND_ERROR,
   DEFAULT_ERROR,
+  FORBIDDEN_ERROR,
 } = require("../utils/errors");
 
 const createItem = (req, res) => {
@@ -50,14 +51,29 @@ const getItems = (req, res) => {
 
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
+  const { _id: userId } = req.user;
+  console.log(itemId);
+  console.log(userId);
 
-  ClothingItem.findByIdAndDelete(itemId)
-    .orFail()
-    .then((item) => res.send({ item }))
+  ClothingItem.findOne({ _id: itemId })
+    .then((item) => {
+      console.log(item);
+      if (!item) {
+        return Promise.reject(new Error("Item not found"));
+      }
+      if (!item.owner == userId) {
+        return Promise.reject(new Error("You are not the owner of this item"));
+      }
+      return ClothingItem.deleteOne({ _id: itemId, owner: userId }).then(() => {
+        res.send({ message: "Item deleted" });
+      });
+    })
     .catch((err) => {
       console.error(err);
-      if (err.name === "DocumentNotFoundError") {
+      if (err.message === "Item not found") {
         res.status(NOTFOUND_ERROR).send({ message: err.message });
+      } else if (err.name === "You are not the owner of this item") {
+        res.status(FORBIDDEN_ERROR).send({ message: err.message });
       } else if (err.name === "CastError") {
         res.status(BAD_REQUEST_ERROR).send({ message: "Invalid data" });
       } else {

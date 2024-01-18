@@ -4,6 +4,9 @@ const helmet = require("helmet");
 const routes = require("./routes");
 const { handleAuthorization } = require("./middlewares/auth");
 const { login, createUser } = require("./controllers/users");
+const cors = require("cors");
+
+app.use(cors());
 
 const { PORT = 3001 } = process.env;
 const app = express();
@@ -20,12 +23,6 @@ mongoose.connect(
 // app.post("/signup", createUser);
 // app.get("/items", items);
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: "65a5e463a6e0d8aac2adec98",
-//   };
-//   next();
-// });
 app.use(helmet());
 app.use(express.json());
 app.use(routes);
