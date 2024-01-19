@@ -26,7 +26,7 @@ const createUser = (req, res) => {
     .then((user) => {
       const payload = user.toObject();
       delete payload.password;
-      return res.status(201).send({ data: payload });
+      res.status(201).send({ data: payload });
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
