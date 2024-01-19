@@ -15,7 +15,6 @@ const createItem = (req, res) => {
       res.send({ data: item });
     })
     .catch((err) => {
-      console.error(err);
       if (err.name === "ValidationError") {
         res.status(BAD_REQUEST_ERROR).send({ message: "Invalid data" });
       } else {
@@ -29,8 +28,7 @@ const createItem = (req, res) => {
 const getItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.send(items))
-    .catch((err) => {
-      console.error(err);
+    .catch(() => {
       res
         .status(DEFAULT_ERROR)
         .send({ message: "An error has occurred on the server." });
@@ -40,7 +38,6 @@ const getItems = (req, res) => {
 const deleteItem = (req, res) => {
   const { itemId } = req.params;
   const { _id: userId } = req.user;
-  console.log(itemId);
 
   ClothingItem.findOne({ _id: itemId })
     .then((item) => {
@@ -55,7 +52,6 @@ const deleteItem = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err.message);
       if (err.message === "Item not found") {
         res.status(NOTFOUND_ERROR).send({ message: err.message });
       } else if (err.message === "You are not the owner of this item") {
@@ -80,7 +76,6 @@ const likeItem = (req, res) => {
     .orFail()
     .then((item) => res.send({ data: item }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "DocumentNotFoundError") {
         res.status(NOTFOUND_ERROR).send({ message: err.message });
       } else if (err.name === "CastError") {
@@ -103,7 +98,6 @@ const unlikeItem = (req, res) => {
     .orFail()
     .then((item) => res.send({ data: item }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "DocumentNotFoundError") {
         res.status(NOTFOUND_ERROR).send({ message: err.message });
       } else if (err.name === "CastError") {

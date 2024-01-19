@@ -1,6 +1,6 @@
-const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
 const {
   BAD_REQUEST_ERROR,
@@ -12,15 +12,11 @@ const {
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
-  console.log({ name, avatar, email, password });
   if (!name || !avatar || !email || !password) {
     return res.status(BAD_REQUEST_ERROR).send({ message: "Invalid data" });
   }
   User.findOne({ email })
     .then((user) => {
-      if (!email) {
-        throw new Error("Please enter a valid email");
-      }
       if (user) {
         throw new Error("Email is already in use");
       }
@@ -30,10 +26,9 @@ const createUser = (req, res) => {
     .then((user) => {
       const payload = user.toObject();
       delete payload.password;
-      res.status(201).send({ data: payload });
+      return res.status(201).send({ data: payload });
     })
     .catch((err) => {
-      console.error(err.name);
       if (err.name === "ValidationError") {
         res.status(BAD_REQUEST_ERROR).send({ message: err.message });
       } else if (err.message === "Please enter a valid email") {
@@ -51,8 +46,7 @@ const createUser = (req, res) => {
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => {
-      console.error(err);
+    .catch(() => {
       res
         .status(DEFAULT_ERROR)
         .send({ message: "An error has occurred on the server." });
@@ -66,7 +60,6 @@ const getUserById = (req, res) => {
     .orFail()
     .then((user) => res.send(user))
     .catch((err) => {
-      console.error(err);
       if (err.name === "DocumentNotFoundError") {
         res.status(NOTFOUND_ERROR).send({ message: err.message });
       } else if (err.name === "CastError") {
@@ -102,7 +95,7 @@ const login = (req, res) => {
 
 const getCurrentUser = (req, res) => {
   const id = req.user._id;
-  console.log(id);
+
   return User.findById(id)
     .then((user) => {
       if (!user) {
@@ -111,7 +104,11 @@ const getCurrentUser = (req, res) => {
       return res.send({ date: user });
     })
     .catch((err) => {
-      res.status(UNAUTHORIZED).send({ message: err.message });
+      if (err.message === "User not found") {
+        res.status(NOTFOUND_ERROR).send({ message: err.message });
+      } else {
+        res.status(DEFAULT_ERROR).send({ message: err.message });
+      }
     });
 };
 
@@ -125,11 +122,13 @@ const updateUser = (req, res) => {
     { new: true, runValidators: true },
   )
     .orFail()
-    .then((user) => {
-      return res.send({ data: user });
-    })
-    .catch((e) => {
-      res.status(500).send({ message: "Error from updateUser,", e });
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(BAD_REQUEST_ERROR).send({ message: "Invalid data" });
+      } else {
+        res.status(DEFAULT_ERROR).send({ message: err.message });
+      }
     });
 };
 
