@@ -4,7 +4,6 @@ const { handleAuthorization } = require("../middlewares/auth");
 const {
   createItem,
   getItems,
-  // updateItem,
   deleteItem,
   likeItem,
   unlikeItem,
@@ -14,7 +13,6 @@ router.get("/", getItems);
 
 router.post("/", handleAuthorization, createItem);
 
-// router.put("/:itemId", updateItem);
 router.put("/:itemId/likes", handleAuthorization, likeItem);
 
 router.delete("/:itemId", handleAuthorization, deleteItem);

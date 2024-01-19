@@ -102,6 +102,7 @@ const login = (req, res) => {
 
 const getCurrentUser = (req, res) => {
   const id = req.user._id;
+  console.log(id);
   return User.findById(id)
     .then((user) => {
       if (!user) {
@@ -132,17 +133,6 @@ const updateUser = (req, res) => {
     });
 };
 
-// const deleteUser = (req, res) => {
-//   const { userId } = req.params;
-
-//   User.findByIdAndDelete(userId)
-//     .orFail()
-//     .then((user) => res.status(204).send({}))
-//     .catch((e) => {
-//       res.status(500).send({ message: "Error from deleteUser,", e });
-//     });
-// };
-
 module.exports = {
   createUser,
   getUsers,
@@ -150,5 +140,4 @@ module.exports = {
   login,
   getCurrentUser,
   updateUser,
-  // deleteUser,
 };

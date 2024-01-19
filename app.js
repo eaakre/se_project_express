@@ -2,8 +2,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const routes = require("./routes");
-const { handleAuthorization } = require("./middlewares/auth");
-const { login, createUser } = require("./controllers/users");
 const cors = require("cors");
 
 const { PORT = 3001 } = process.env;
@@ -17,10 +15,6 @@ mongoose.connect(
   },
   (e) => console.log("DB error", e),
 );
-
-// app.post("/signin", login);
-// app.post("/signup", createUser);
-// app.get("/items", items);
 
 app.use(helmet());
 app.use(express.json());
