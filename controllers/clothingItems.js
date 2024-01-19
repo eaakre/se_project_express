@@ -53,15 +53,13 @@ const deleteItem = (req, res) => {
   const { itemId } = req.params;
   const { _id: userId } = req.user;
   console.log(itemId);
-  console.log(userId);
 
   ClothingItem.findOne({ _id: itemId })
     .then((item) => {
-      console.log(item);
       if (!item) {
         return Promise.reject(new Error("Item not found"));
       }
-      if (!item.owner == userId) {
+      if (item.owner.toHexString() !== userId) {
         return Promise.reject(new Error("You are not the owner of this item"));
       }
       return ClothingItem.deleteOne({ _id: itemId, owner: userId }).then(() => {
@@ -69,10 +67,10 @@ const deleteItem = (req, res) => {
       });
     })
     .catch((err) => {
-      console.error(err);
+      console.log(err.message);
       if (err.message === "Item not found") {
         res.status(NOTFOUND_ERROR).send({ message: err.message });
-      } else if (err.name === "You are not the owner of this item") {
+      } else if (err.message === "You are not the owner of this item") {
         res.status(FORBIDDEN_ERROR).send({ message: err.message });
       } else if (err.name === "CastError") {
         res.status(BAD_REQUEST_ERROR).send({ message: "Invalid data" });

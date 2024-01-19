@@ -21,8 +21,10 @@ const user = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    validator: (v) => validator.email(v),
-    message: "You must enter a valid email",
+    validate: {
+      validator: (v) => validator.isEmail(v),
+      message: "You must enter a valid email",
+    },
   },
   password: {
     type: String,

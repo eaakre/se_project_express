@@ -4,17 +4,20 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 const {
   BAD_REQUEST_ERROR,
+  UNAUTHORIZED,
   NOTFOUND_ERROR,
   DEFAULT_ERROR,
+  CONFLICT_ERROR,
 } = require("../utils/errors");
 
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   console.log({ name, avatar, email, password });
+  if (!name || !avatar || !email || !password) {
+    return res.status(BAD_REQUEST_ERROR).send({ message: "Invalid data" });
+  }
   User.findOne({ email })
     .then((user) => {
-      console.log(email);
-      console.log(user);
       if (!email) {
         throw new Error("Please enter a valid email");
       }
@@ -30,9 +33,13 @@ const createUser = (req, res) => {
       res.status(201).send({ data: payload });
     })
     .catch((err) => {
-      console.error(err);
+      console.error(err.name);
       if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST_ERROR).send({ message: "Invalid data" });
+        res.status(BAD_REQUEST_ERROR).send({ message: err.message });
+      } else if (err.message === "Please enter a valid email") {
+        res.status(BAD_REQUEST_ERROR).send({ message: err.message });
+      } else if (err.message === "Email is already in use") {
+        res.status(CONFLICT_ERROR).send({ message: err.message });
       } else {
         res
           .status(DEFAULT_ERROR)
@@ -74,6 +81,13 @@ const getUserById = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST_ERROR)
+      .send({ message: "Invalid credentials" });
+  }
+
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -82,7 +96,7 @@ const login = (req, res) => {
       res.send({ token });
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      res.status(UNAUTHORIZED).send({ message: err.message });
     });
 };
 
@@ -96,7 +110,7 @@ const getCurrentUser = (req, res) => {
       return res.send({ date: user });
     })
     .catch((err) => {
-      res.status(404).send({ message: err.message });
+      res.status(UNAUTHORIZED).send({ message: err.message });
     });
 };
 
