@@ -15,7 +15,7 @@ const createUser = (req, res) => {
   if (!name || !avatar || !email || !password) {
     return res.status(BAD_REQUEST_ERROR).send({ message: "Invalid data" });
   }
-  User.findOne({ email })
+  return User.findOne({ email })
     .then((user) => {
       if (user) {
         throw new Error("Email is already in use");
