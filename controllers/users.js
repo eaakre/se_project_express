@@ -101,7 +101,7 @@ const getCurrentUser = (req, res) => {
       if (!user) {
         return Promise.reject(new Error("User not found"));
       }
-      return res.send({ date: user });
+      return res.send({ data: user });
     })
     .catch((err) => {
       if (err.message === "User not found") {
