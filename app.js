@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const routes = require("./routes");
 const errorHandler = require("./middlewares/errorHandler");
+const { errors } = require("celebrate");
 
 const { PORT = 3001 } = process.env;
 const app = express();
@@ -22,6 +23,8 @@ app.use((err, req, res, next) => {
   console.error(err);
   return res.send({ message: err.message });
 });
+
+app.use(errors());
 
 app.use(errorHandler);
 
