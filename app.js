@@ -2,9 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
 const cors = require("cors");
+const { errors } = require("celebrate");
 const routes = require("./routes");
 const errorHandler = require("./middlewares/errorHandler");
-const { errors } = require("celebrate");
 
 const { PORT = 3001 } = process.env;
 const app = express();

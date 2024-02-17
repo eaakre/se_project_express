@@ -56,7 +56,7 @@ const validateLogin = celebrate({
   }),
 });
 
-validateId = celebrate({
+const validateId = celebrate({
   params: Joi.object().keys({
     id: Joi.string().hex().length(24),
   }),

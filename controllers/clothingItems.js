@@ -35,10 +35,10 @@ const deleteItem = (req, res, next) => {
   ClothingItem.findOne({ _id: itemId })
     .then((item) => {
       if (!item) {
-        throw new NotFoundError("Item not found");
+        next(new NotFoundError("Item not found"));
       }
       if (item.owner.toHexString() !== userId) {
-        throw new ForbiddenError("You are not the owner of this item");
+        next(new ForbiddenError("You are not the owner of this item"));
       }
       ClothingItem.deleteOne({ _id: itemId, owner: userId }).then(() => {
         res.send({ message: "Item deleted" });
@@ -46,7 +46,7 @@ const deleteItem = (req, res, next) => {
     })
     .catch((err) => {
       if (err.message === "Item not found") {
-        next(new NotFoundError.send(err.message));
+        next(new NotFoundError(err.message));
       } else if (err.message === "You are not the owner of this item") {
         next(new ForbiddenError(err.message));
       } else if (err.name === "CastError") {
@@ -68,7 +68,7 @@ const likeItem = (req, res, next) => {
     .then((item) => res.send({ data: item }))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError.send(err.message));
+        next(new NotFoundError(err.message));
       } else if (err.name === "CastError") {
         next(new BadRequestError("The id string is in an invalid format"));
       } else {
@@ -88,7 +88,7 @@ const unlikeItem = (req, res, next) => {
     .then((item) => res.send({ data: item }))
     .catch((err) => {
       if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError.send(err.message));
+        next(new NotFoundError(err.message));
       } else if (err.name === "CastError") {
         next(new BadRequestError("The id string is in an invalid format"));
       } else {

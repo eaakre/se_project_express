@@ -15,9 +15,9 @@ const createUser = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        next(BadRequestError("Email is already in use"));
+        next(new BadRequestError("Email is already in use"));
       }
-      bcrypt.hash(password, 10);
+      return bcrypt.hash(password, 10);
     })
     .then((hash) => User.create({ name, avatar, email, password: hash }))
     .then((user) => {
@@ -41,7 +41,7 @@ const createUser = (req, res, next) => {
 const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch(() => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -67,7 +67,7 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    next(BadRequestError("Invalid credentials"));
+    next(new BadRequestError("Invalid credentials"));
   }
 
   User.findUserByCredentials(email, password)
@@ -78,7 +78,7 @@ const login = (req, res, next) => {
       res.send({ token });
     })
     .catch((err) => {
-      next(UnauthorizedError(err.message));
+      next(new UnauthorizedError(err.message));
     });
 };
 
@@ -88,13 +88,13 @@ const getCurrentUser = (req, res, next) => {
   User.findById(id)
     .then((user) => {
       if (!user) {
-        next(NotFoundError("User not found"));
+        next(new NotFoundError("User not found"));
       }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.message === "User not found") {
-        next(NotFoundError(err.message));
+        next(new NotFoundError(err.message));
       } else {
         next(err);
       }
