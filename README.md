@@ -4,6 +4,8 @@
 
 Domain: wtwr.themoosebarn.com
 
+[Link to front-end repository](https://github.com/eaakre/se_project_react)
+
 ## WTWR (What to Wear?): Back End
 
 This project is focused on creating a server for the WTWR application. It is connected to a MongoDB database with users and clothing items. The eventual goal is to create a server with an API and user authorization.
