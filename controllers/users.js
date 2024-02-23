@@ -15,7 +15,7 @@ const createUser = (req, res, next) => {
   User.findOne({ email })
     .then((user) => {
       if (user) {
-        next(new BadRequestError("Email is already in use"));
+        next(new ConflictError("Email is already in use"));
       }
       return bcrypt.hash(password, 10);
     })
@@ -32,31 +32,6 @@ const createUser = (req, res, next) => {
         next(new BadRequestError(err.message));
       } else if (err.message === "Email is already in use") {
         next(new ConflictError(err.message));
-      } else {
-        next(err);
-      }
-    });
-};
-
-const getUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => res.send(users))
-    .catch((err) => {
-      next(err);
-    });
-};
-
-const getUserById = (req, res, next) => {
-  const { userId } = req.params;
-
-  User.findById(userId)
-    .orFail()
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === "DocumentNotFoundError") {
-        next(new NotFoundError(err.message));
-      } else if (err.name === "CastError") {
-        next(new BadRequestError("Invalid data"));
       } else {
         next(err);
       }
@@ -123,8 +98,6 @@ const updateUser = (req, res, next) => {
 
 module.exports = {
   createUser,
-  getUsers,
-  getUserById,
   login,
   getCurrentUser,
   updateUser,
