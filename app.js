@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
@@ -26,10 +28,6 @@ app.get("/crash-test", () => {
 
 app.use(routes);
 app.use(errorLogger);
-app.use((err, req, res, next) => {
-  console.error(err);
-  return res.send({ message: err.message });
-});
 app.use(errors());
 app.use(errorHandler);
 
